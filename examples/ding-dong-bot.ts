@@ -13,11 +13,16 @@ import {
   ScanStatus,
   WechatyBuilder,
   log,
-}                  from 'wechaty'
+} from 'wechaty'
 
 import qrcodeTerminal from 'qrcode-terminal'
+import { PuppetPadlocal } from "wechaty-puppet-padlocal"
 
-function onScan (qrcode: string, status: ScanStatus) {
+const puppet = new PuppetPadlocal({
+  token: "puppet_padlocal_a2e3068316654811946aee69942490e4"
+})
+
+function onScan(qrcode: string, status: ScanStatus) {
   if (status === ScanStatus.Waiting || status === ScanStatus.Timeout) {
     const qrcodeImageUrl = [
       'https://wechaty.js.org/qrcode/',
@@ -32,15 +37,15 @@ function onScan (qrcode: string, status: ScanStatus) {
   }
 }
 
-function onLogin (user: Contact) {
+function onLogin(user: Contact) {
   log.info('StarterBot', '%s login', user)
 }
 
-function onLogout (user: Contact) {
+function onLogout(user: Contact) {
   log.info('StarterBot', '%s logout', user)
 }
 
-async function onMessage (msg: Message) {
+async function onMessage(msg: Message) {
   log.info('StarterBot', msg.toString())
 
   if (msg.text() === 'ding') {
@@ -50,6 +55,7 @@ async function onMessage (msg: Message) {
 
 const bot = WechatyBuilder.build({
   name: 'ding-dong-bot',
+  puppet,
   /**
    * How to set Wechaty Puppet Provider:
    *
@@ -76,9 +82,9 @@ const bot = WechatyBuilder.build({
   // }
 })
 
-bot.on('scan',    onScan)
-bot.on('login',   onLogin)
-bot.on('logout',  onLogout)
+bot.on('scan', onScan)
+bot.on('login', onLogin)
+bot.on('logout', onLogout)
 bot.on('message', onMessage)
 
 bot.start()
